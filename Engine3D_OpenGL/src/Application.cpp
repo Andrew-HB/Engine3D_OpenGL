@@ -13,6 +13,8 @@
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 #include "Shader.h"
+#include "Object.h"
+#include "Engine.h"
 
 int main(void)
 {
@@ -53,9 +55,13 @@ int main(void)
             2, 3, 0
         };
 
-        unsigned int vao;
-        GLCall(glGenVertexArrays(1, &vao));
-        GLCall(glBindVertexArray(vao));
+        Object object3d("res/objects/cube.obj");
+
+        Engine engine(480, 640, object3d);
+
+        //unsigned int vao;
+        //GLCall(glGenVertexArrays(1, &vao));
+        //GLCall(glBindVertexArray(vao));
 
         VertexArray va;
         VertexBuffer vb(positions, sizeof(positions));
