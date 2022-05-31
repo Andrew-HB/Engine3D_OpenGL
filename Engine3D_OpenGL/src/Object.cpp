@@ -41,7 +41,18 @@ const void Object::LoadFromFile(const std::string& filepath)
 		{
 			int f[3];
 			s >> junk >> f[0] >> f[1] >> f[2];
-			this->positions.push_back({ verts[f[0] - 1], verts[f[1] - 1], verts[f[2] - 1] });
+			this->vertices.push_back({ verts[f[0] - 1], verts[f[1] - 1], verts[f[2] - 1] });
 		}
+	}
+}
+
+const void Object::ConvertObject(std::vector<triangle> v)
+{
+	for (int i = 0; i < v.size(); i++) {
+		this->positions.push_back(v[i].p[0].x);
+		this->positions.push_back(v[i].p[0].y);
+		this->positions.push_back(v[i].p[0].z);
+		this->positions.push_back(v[i].gryscale);
+		this->indices.push_back(i + 1);
 	}
 }

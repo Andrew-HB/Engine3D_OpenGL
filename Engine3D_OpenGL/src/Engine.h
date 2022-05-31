@@ -301,10 +301,10 @@ private:
 		matProj = Matrix_MakeProjection(90.0f, (float)height / (float)width, 0.1f, 1000.0f);
 	}
 
-	std::vector<triangle> Update(float fElapsedTime) {
+public: std::vector<triangle> Update(float fElapsedTime) {
 		vForward = Vector_Mul(vLookDir, cameraMoveSpeed * fElapsedTime);
 		mat4x4 matRotZ, matRotX, matRotY;
-		//fTheta += 1.0f * fElapsedTime;
+		fTheta += 1.0f * fElapsedTime;
 
 		//matRotX = Matrix_MakeRotationX(fTheta);
 		//matRotZ = Matrix_MakeRotationZ(fTheta);
@@ -334,7 +334,7 @@ private:
 		std::vector<triangle> vecTrianglesToRaster;
 
 		// Draw Triangles
-		for (auto tri : meshCube.GetPositions())
+		for (auto tri : meshCube.GetVertices())
 		{
 			triangle triProjected, triTransformed, triViewed;
 

@@ -16,6 +16,8 @@
 #include "Object.h"
 #include "Engine.h"
 
+#include <chrono>
+
 int main(void)
 {
     GLFWwindow* window;
@@ -35,7 +37,7 @@ int main(void)
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
-    glfwSwapInterval(1);
+    //glfwSwapInterval(1);
 
     if (glewInit() != GLEW_OK) {
         std::cout << "GLEW initalization error!" << std::endl;
@@ -59,32 +61,23 @@ int main(void)
 
         Engine engine(480, 640, object3d);
 
-        //unsigned int vao;
-        //GLCall(glGenVertexArrays(1, &vao));
-        //GLCall(glBindVertexArray(vao));
-
-        VertexArray va;
-        VertexBuffer vb(positions, sizeof(positions));
-
         VertexBufferLayout layout;
-        layout.Push<float>(2);
-        va.AddBuffer(vb, layout);
-
-        IndexBuffer ib(indices, 6);
+        layout.Push<float>(3);
+        layout.Push<float>(1);
 
         Shader shader("res/shaders/Basic.shader");
-        shader.Bind();
-        shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
-
-        va.Unbind();
-        vb.Unbind();
-        ib.Unbind();
-        shader.Unbind();
+        //shader.Bind();
+        //shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
+        //shader.Unbind();
 
         Renderer renderer;
 
-        float r = 0.0f;
-        float increment = 0.05f;
+        float fElapsedTime;
+
+        std::chrono::system_clock::time_point prevT;
+
+        //float r = 0.0f;
+        //float increment = 0.05f;
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
@@ -92,17 +85,32 @@ int main(void)
             /* Render here */
             renderer.Clear();
 
+            std::chrono::duration<float> elapsedTime = std::chrono::system_clock::now() - prevT;
+            prevT = std::chrono::system_clock::now();
+            fElapsedTime = elapsedTime.count();
+
+            std::vector<triangle> positions = engine.Update(fElapsedTime);
+            Object glObject;
+            glObject.ConvertObject(positions);
+
+            VertexArray va;
+            VertexBuffer vb(&glObject.positions[0], sizeof(glObject.positions));
+
+            va.AddBuffer(vb, layout);
+
+            IndexBuffer ib(&glObject.indices[0], glObject.indices.size());
+
             shader.Bind();
-            shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
+            //shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
             renderer.Draw(va, ib, shader);
 
-            if (r > 1.0f)
-                increment = -0.05f;
-            else if (r < 0.0f)
-                increment = 0.05f;
-
-            r += increment;
+            //if (r > 1.0f)
+            //    increment = -0.05f;
+            //else if (r < 0.0f)
+            //    increment = 0.05f;
+            //
+            //r += increment;
 
             /* Swap front and back buffers */
             GLCall(glfwSwapBuffers(window));
