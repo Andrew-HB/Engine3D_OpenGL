@@ -51,7 +51,7 @@ const void Object::ConvertObject(std::vector<triangle> v)
 	for (int i = 0; i < v.size(); i++) {
 		this->positions.push_back(v[i].p[0].x);
 		this->positions.push_back(v[i].p[0].y);
-		this->positions.push_back(v[i].p[0].z);
+		//this->positions.push_back(v[i].p[0].z);
 		this->positions.push_back(v[i].gryscale);
 		this->indices.push_back(i + 1);
 	}

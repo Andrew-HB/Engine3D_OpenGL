@@ -32,6 +32,7 @@ public:
 		fTheta = 0.0f;
 		vCamera = { 0.0f, 0.0f, 0.0f };
 		fYaw = 0.0f;
+		Create();
 	}
 	~Engine() {}
 
@@ -298,6 +299,7 @@ private:
 
 
 	void Create() {
+		//matProj = Matrix_MakeProjection(90.0f, 1, 0.1f, 1000.0f);
 		matProj = Matrix_MakeProjection(90.0f, (float)height / (float)width, 0.1f, 1000.0f);
 	}
 
@@ -334,7 +336,7 @@ public: std::vector<triangle> Update(float fElapsedTime) {
 		std::vector<triangle> vecTrianglesToRaster;
 
 		// Draw Triangles
-		for (auto tri : meshCube.GetVertices())
+		for (auto tri : meshCube.vertices)
 		{
 			triangle triProjected, triTransformed, triViewed;
 

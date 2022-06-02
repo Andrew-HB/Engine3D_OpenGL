@@ -18,6 +18,9 @@
 
 #include <chrono>
 
+#define width 640
+#define height 480
+
 int main(void)
 {
     GLFWwindow* window;
@@ -27,7 +30,7 @@ int main(void)
         return -1;
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(width, height, "Hello World", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -45,39 +48,21 @@ int main(void)
 
     std::cout << glGetString(GL_VERSION) << std::endl;
     {
-        float positions[] = {
-            -0.5f, -0.5f,
-             0.5f, -0.5f,
-             0.5f,  0.5f,
-            -0.5f,  0.5f
-        };
-
-        unsigned int indices[]{
-            0, 1, 2,
-            2, 3, 0
-        };
-
         Object object3d("res/objects/cube.obj");
 
-        Engine engine(480, 640, object3d);
+        Engine engine(height, width, object3d);
 
         VertexBufferLayout layout;
-        layout.Push<float>(3);
+        layout.Push<float>(2);
         layout.Push<float>(1);
 
         Shader shader("res/shaders/Basic.shader");
-        //shader.Bind();
-        //shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
-        //shader.Unbind();
 
         Renderer renderer;
 
         float fElapsedTime;
 
         std::chrono::system_clock::time_point prevT;
-
-        //float r = 0.0f;
-        //float increment = 0.05f;
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
@@ -90,27 +75,31 @@ int main(void)
             fElapsedTime = elapsedTime.count();
 
             std::vector<triangle> positions = engine.Update(fElapsedTime);
+            for (int i = 0; i < positions.size(); i++) {
+
+                positions[i].p[0].x = (positions[i].p[0].x - width / 2) / width;
+                positions[i].p[0].y = (positions[i].p[0].x - height / 2) / height;
+                positions[i].p[1].x = (positions[i].p[1].x - width / 2) / width;
+                positions[i].p[1].y = (positions[i].p[1].x - height / 2) / height;
+                positions[i].p[2].x = (positions[i].p[2].x - width / 2) / width;
+                positions[i].p[2].y = (positions[i].p[2].x - height / 2) / height;
+            }
+
             Object glObject;
             glObject.ConvertObject(positions);
 
             VertexArray va;
-            VertexBuffer vb(&glObject.positions[0], sizeof(glObject.positions));
+            VertexBuffer vb(static_cast<void*>(glObject.positions.data()), sizeof(float) * glObject.positions.size());
 
             va.AddBuffer(vb, layout);
 
-            IndexBuffer ib(&glObject.indices[0], glObject.indices.size());
+            IndexBuffer ib(static_cast<unsigned int*>(glObject.indices.data()), glObject.indices.size());
+
+            std::cout << glObject.indices.size() << std::endl;
 
             shader.Bind();
-            //shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
             renderer.Draw(va, ib, shader);
-
-            //if (r > 1.0f)
-            //    increment = -0.05f;
-            //else if (r < 0.0f)
-            //    increment = 0.05f;
-            //
-            //r += increment;
 
             /* Swap front and back buffers */
             GLCall(glfwSwapBuffers(window));
