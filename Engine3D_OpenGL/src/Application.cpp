@@ -60,7 +60,7 @@ int main(void)
 
         Renderer renderer;
 
-        float fElapsedTime = 0;
+        float fElapsedTime;
 
         std::chrono::system_clock::time_point prevT;
 
