@@ -16,9 +16,9 @@ void main()
 #version 330 core
 
 in vec3 fragmentColor;
-out vec4 color;
+out vec3 color;
 
 void main()
 {
-	color = vec4(fragmentColor.xyz, 1.0);
+	color = vec3(fragmentColor);
 };

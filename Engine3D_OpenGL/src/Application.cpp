@@ -18,7 +18,7 @@
 
 #include <chrono>
 
-#define width 640
+#define width 720
 #define height 480
 
 int main(void)
@@ -60,7 +60,7 @@ int main(void)
 
         Renderer renderer;
 
-        float fElapsedTime;
+        float fElapsedTime = 0;
 
         std::chrono::system_clock::time_point prevT;
 
@@ -76,26 +76,25 @@ int main(void)
 
             std::vector<triangle> positions = engine.Update(fElapsedTime);
             for (int i = 0; i < positions.size(); i++) {
-
                 positions[i].p[0].x = (positions[i].p[0].x - width / 2) / width;
-                positions[i].p[0].y = (positions[i].p[0].x - height / 2) / height;
+                positions[i].p[0].y = (positions[i].p[0].y - height / 2) / height;
                 positions[i].p[1].x = (positions[i].p[1].x - width / 2) / width;
-                positions[i].p[1].y = (positions[i].p[1].x - height / 2) / height;
+                positions[i].p[1].y = (positions[i].p[1].y - height / 2) / height;
                 positions[i].p[2].x = (positions[i].p[2].x - width / 2) / width;
-                positions[i].p[2].y = (positions[i].p[2].x - height / 2) / height;
+                positions[i].p[2].y = (positions[i].p[2].y - height / 2) / height;
             }
 
             Object glObject;
             glObject.ConvertObject(positions);
 
             VertexArray va;
-            VertexBuffer vb(static_cast<void*>(glObject.positions.data()), sizeof(float) * glObject.positions.size());
+            VertexBuffer vb(static_cast<void*>(glObject.positions.data()), 2 * (sizeof(float) * (glObject.positions.size() / 3)) + sizeof(unsigned int) * (glObject.positions.size() / 3));
 
             va.AddBuffer(vb, layout);
 
             IndexBuffer ib(static_cast<unsigned int*>(glObject.indices.data()), glObject.indices.size());
 
-            std::cout << glObject.indices.size() << std::endl;
+            //std::cout << glObject.indices.size() << std::endl;
 
             shader.Bind();
 
